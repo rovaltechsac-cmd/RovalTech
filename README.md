@@ -1,6 +1,6 @@
 # Roval Tech
 
-Sitio web corporativo de Roval Tech desarrollado en **Laravel 8** (compatible con PHP 8.0).
+Sitio web corporativo de Roval Tech desarrollado en **Laravel 8** (compatible con PHP 7.3 a 8.4; probado en PHP 8.3 y 8.4).
 Incluye interfaz publicitaria, quiénes somos, servicios, productos, catálogo de proyectos y
 panel de administración con inicio de sesión.
 
@@ -68,8 +68,10 @@ Los datos de contacto de la plantilla son de ejemplo (`contacto@rovaltech.com`,
 
 ## Requisitos del servidor
 
-- **PHP 7.3 – 8.1** (Laravel 8). Si tu hosting tiene PHP **8.2 o 8.3**, cambia la versión a **8.1** en cPanel → *Select PHP Version* / *MultiPHP Manager*; con 8.3 Laravel 8 devuelve 500 en blanco.
+- **PHP 7.3 – 8.4**. El proyecto funciona con **PHP 8.3** sin cambiar de versión en el hosting. Verificado localmente con PHP 8.4 (más estricto que 8.3): portada, todas las páginas, login y detalle de proyectos responden 200.
 - Extensiones: `mbstring`, `openssl`, `pdo_sqlite` (o `pdo_mysql`), `tokenizer`, `xml`, `ctype`, `json`, `fileinfo`, `curl`.
+- Si el hosting no tiene `fileinfo`, `setup.php` instala con `--ignore-platform-req=ext-fileinfo`; aun así conviene activar la extensión para poder subir imágenes.
+- Laravel 8 puede emitir avisos de *deprecación* en PHP 8.x: **no afectan el funcionamiento**. En producción (`APP_DEBUG=false`) la aplicación los omite durante la ejecución para reducir el ruido en `storage/logs/laravel.log`.
 
 ## Despliegue en hosting con Git Version Control (cPanel)
 
@@ -161,3 +163,16 @@ Y accede a `https://kipucloud.com/rovalTech/`.
 > `bash deploy.sh`. Si `/rovalTech/public/` daba error 500, revisa
 > `storage/logs/laravel.log`: casi siempre es `APP_KEY` vacío, falta de
 > `vendor/` o permisos de `storage/`.
+
+### Volver a PHP 8.3
+
+El proyecto ya está declarado para PHP 8.3 en `composer.json` (`config.platform.php`)
+y fue verificado con PHP 8.4. Puedes volver a seleccionar **PHP 8.3** en
+cPanel → *Select PHP Version* sin reinstalar nada: `vendor/`, `.env` y la base de
+datos son los mismos. Después de cambiar la versión ejecuta:
+
+```bash
+php artisan optimize:clear
+```
+
+Si algo falla, revisa `storage/logs/laravel.log`.

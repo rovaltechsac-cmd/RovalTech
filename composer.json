@@ -12,7 +12,7 @@
             "security-advisories": false
         },
         "platform": {
-            "php": "8.0.30"
+            "php": "8.3.0"
         },
         "policy": {
             "advisories": {
