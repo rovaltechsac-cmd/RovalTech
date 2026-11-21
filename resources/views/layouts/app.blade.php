@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="@yield('description', 'Soluciones de ingeniería mecatrónica, electrónica, automatización industrial, robótica y desarrollo de software a medida.')">
     <meta name="theme-color" content="#08080a">
-    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
     <title>@yield('title', 'Roval Tech | Ingeniería, Automatización y Tecnología')</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v=2">
 </head>
 <body class="slash-theme">
     <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
@@ -18,7 +18,7 @@
     <header class="site-header" id="siteHeader">
         <div class="container navbar">
             <a href="{{ route('home') }}" class="brand brand-logo" aria-label="Roval Tech - Inicio">
-                <img src="{{ asset('images/logo.png') }}" alt="Roval Tech">
+                <img src="{{ asset('images/logo.png') }}?v=2" alt="Roval Tech">
             </a>
 
             <nav class="nav-links" id="navLinks" aria-label="Navegación principal">
@@ -55,7 +55,7 @@
         <div class="container footer-grid">
             <div class="footer-brand">
                 <a href="{{ route('home') }}" class="brand brand-logo brand-logo-footer" aria-label="Roval Tech - Inicio">
-                    <img src="{{ asset('images/logo.png') }}" alt="Roval Tech">
+                    <img src="{{ asset('images/logo.png') }}?v=2" alt="Roval Tech">
                 </a>
                 <p>Ingeniería mecatrónica y electrónica para convertir ideas en soluciones tecnológicas reales.</p>
                 <div class="footer-social" aria-label="Redes sociales">
@@ -110,6 +110,6 @@
         </div>
     </footer>
 
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}?v=2"></script>
 </body>
 </html>
