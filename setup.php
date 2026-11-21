@@ -9,11 +9,41 @@ if (($_GET['key'] ?? '') !== 'roval-setup-2026') {
 header('Content-Type: text/plain; charset=utf-8');
 
 $dir = __DIR__;
-$php = PHP_BINARY;
 $disabled = array_map('trim', explode(',', (string) ini_get('disable_functions')));
 
+// Preferir el binario CLI de PHP (Composer se niega a correr bajo LSAPI/CGI).
+function findPhpBinary()
+{
+    global $disabled;
+    $candidates = [
+        '/opt/alt/php81/usr/bin/php',
+        '/opt/cpanel/ea-php81/root/usr/bin/php',
+        '/usr/local/bin/php',
+        '/usr/bin/php',
+        '/usr/local/bin/php81',
+        '/usr/bin/php81',
+        PHP_BINARY,
+        'php',
+    ];
+    foreach ($candidates as $bin) {
+        $out = [];
+        $code = 0;
+        @exec(escapeshellarg($bin) . ' -r "echo PHP_SAPI;" 2>/dev/null', $out, $code);
+        $sapi = implode('', $out);
+        if ($code === 0 && $sapi === 'cli') {
+            return ['bin' => $bin, 'sapi' => $sapi];
+        }
+    }
+    return ['bin' => PHP_BINARY, 'sapi' => PHP_SAPI];
+}
+
+$phpInfo = findPhpBinary();
+$php = escapeshellarg($phpInfo['bin']);
+$phpFlags = $phpInfo['sapi'] === 'cli' ? '' : ' -d register_argc_argv=Off';
+
 echo 'PHP: ' . PHP_VERSION . PHP_EOL;
-echo 'PHP binary: ' . $php . PHP_EOL;
+echo 'PHP usado: ' . $phpInfo['bin'] . ' (SAPI: ' . $phpInfo['sapi'] . ')' . PHP_EOL;
+echo 'Flags: ' . ($phpFlags ?: '(ninguno)') . PHP_EOL;
 echo 'disable_functions: ' . (string) ini_get('disable_functions') . PHP_EOL;
 foreach (['exec', 'shell_exec', 'proc_open', 'passthru', 'system'] as $fn) {
     echo $fn . ': ' . ((function_exists($fn) && !in_array($fn, $disabled)) ? 'SI' : 'NO') . PHP_EOL;
@@ -47,7 +77,7 @@ if (!is_file($dir . '/vendor/autoload.php')) {
         }
     }
     if (is_file($composer)) {
-        runCommand($php . ' composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-interaction', $dir);
+        runCommand($php . $phpFlags . ' composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-interaction', $dir);
     }
 } else {
     echo 'vendor/ ya existe' . PHP_EOL . PHP_EOL;
@@ -72,10 +102,10 @@ if (!is_file($dir . '/database/database.sqlite')) {
 }
 
 echo '--- Laravel ---' . PHP_EOL;
-runCommand($php . ' artisan key:generate', $dir);
-runCommand($php . ' artisan migrate --force', $dir);
-runCommand($php . ' artisan db:seed --force', $dir);
-runCommand($php . ' artisan optimize:clear', $dir);
+runCommand($php . $phpFlags . ' artisan key:generate', $dir);
+runCommand($php . $phpFlags . ' artisan migrate --force', $dir);
+runCommand($php . $phpFlags . ' artisan db:seed --force', $dir);
+runCommand($php . $phpFlags . ' artisan optimize:clear', $dir);
 
 echo '--- Estado final ---' . PHP_EOL;
 echo 'Vendor: ' . (is_file($dir . '/vendor/autoload.php') ? 'OK' : 'FALTA') . PHP_EOL;
