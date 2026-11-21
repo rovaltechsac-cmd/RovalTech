@@ -65,3 +65,73 @@ Contraseña:  rovaltech2026
 Los datos de contacto de la plantilla son de ejemplo (`contacto@rovaltech.com`,
 `+52 55 0000 0000`). Reemplázalos en `resources/views/contacto.blade.php` y
 `resources/views/layouts/app.blade.php`.
+
+## Despliegue en hosting con Git Version Control (cPanel)
+
+El repositorio ya está listo para clonarse desde el hosting:
+
+```
+Clone URL: https://github.com/rovaltechsac-cmd/RovalTech.git
+Branch:    main
+```
+
+### 1. Crear el repositorio en cPanel
+
+1. **Git Version Control** → **Create**
+2. *Clone URL*: la URL de arriba
+3. *Branch*: `main`
+4. *Repository Path*: por ejemplo `/home/TU_USUARIO/repos/rovaltech`
+5. En **Document Root** de tu dominio (o subdominio) apunta a:
+
+```
+/home/TU_USUARIO/repos/rovaltech/public
+```
+
+> Laravel solo expone `public/`. Nunca apuntes el dominio a la raíz del repo.
+
+### 2. Comando de despliegue
+
+En la misma pantalla de cPanel, en *Deployment Command* pon:
+
+```bash
+bash deploy.sh
+```
+
+El script `deploy.sh` instala dependencias, crea `.env` si no existe, genera
+`APP_KEY`, migra, siembra los datos de ejemplo y ajusta permisos.
+
+### 3. Configuración manual (solo la primera vez)
+
+Entra por SSH a tu hosting y, dentro del repo:
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+Ajusta al menos:
+
+- `APP_ENV=production`
+- `APP_DEBUG=false`
+- `APP_URL=https://tu-dominio.com`
+- Datos de base de datos (SQLite funciona; para MySQL descomenta las líneas en `.env.example`)
+
+Luego ejecuta:
+
+```bash
+bash deploy.sh
+```
+
+### 4. Verificación
+
+- Abre `https://tu-dominio.com` → debe cargar la portada.
+- `/login` → `admin@rovaltech.com` / `rovaltech2026` (cámbialo antes de publicar).
+- `/admin/proyectos` → panel con los radios **Activo / Inactivo**.
+
+### Notas
+
+- `.env` y `/vendor` **no** están en el repositorio (están en `.gitignore`).
+- `database/database.sqlite` tampoco se versiona: se crea automáticamente en el hosting.
+- Las imágenes que subas desde el panel se guardan en `public/uploads/projects/`
+  y ese directorio se respeta en futuros `pull` (su `.gitignore` ignora el contenido).
+- El seeder usa `firstOrCreate`: no sobrescribe proyectos ni contraseñas que ya edits en producción.

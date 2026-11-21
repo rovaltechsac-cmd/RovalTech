@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::updateOrCreate(
+        User::firstOrCreate(
             ['email' => 'admin@rovaltech.com'],
             [
                 'name' => 'Administrador Roval Tech',
@@ -69,7 +69,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($projects as $project) {
-            Project::updateOrCreate(
+            Project::firstOrCreate(
                 ['slug' => \Illuminate\Support\Str::slug($project['title'])],
                 $project
             );
