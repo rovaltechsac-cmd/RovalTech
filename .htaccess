@@ -1,0 +1,21 @@
+# Roval Tech - compatibility layer for hostings that serve the repo root
+# at /rovalTech instead of pointing the Document Root to public/.
+# If your domain already points to public/, this file is harmless.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Never expose source code, credentials or deploy scripts
+    RewriteRule ^(\.env|\.git|app/|bootstrap/|config/|database/|resources/|routes/|storage/|tests/|vendor/|artisan|composer\.(json|lock)|package\.json|deploy\.sh) - [F,L]
+
+    # Requests already rewritten into public/ pass through
+    RewriteRule ^public/ - [L]
+
+    # Landing page -> root index.php -> public/index.php
+    RewriteRule ^$ index.php [L]
+
+    # Assets and Laravel routes -> public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.+)$ public/$1 [L]
+</IfModule>

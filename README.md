@@ -135,3 +135,24 @@ bash deploy.sh
 - Las imágenes que subas desde el panel se guardan en `public/uploads/projects/`
   y ese directorio se respeta en futuros `pull` (su `.gitignore` ignora el contenido).
 - El seeder usa `firstOrCreate`: no sobrescribe proyectos ni contraseñas que ya edits en producción.
+
+### Si tu hosting sirve la URL con `/rovalTech`
+
+Cuando el repo se clona en `public_html/rovalTech` y no puedes cambiar el
+*Document Root*, deja los archivos `index.php` y `.htaccess` que están en la
+raíz del repo: redirigen las peticiones a `public/` y bloquean el acceso a
+`.env`, `vendor/`, `app/`, etc.
+
+En ese caso configura en `.env`:
+
+```env
+APP_URL=https://kipucloud.com/rovalTech
+```
+
+Y accede a `https://kipucloud.com/rovalTech/`.
+
+> Igualmente debes completar una vez por SSH: `cp .env.example .env`,
+> `php artisan key:generate`, `php artisan migrate --force` y
+> `bash deploy.sh`. Si `/rovalTech/public/` daba error 500, revisa
+> `storage/logs/laravel.log`: casi siempre es `APP_KEY` vacío, falta de
+> `vendor/` o permisos de `storage/`.
