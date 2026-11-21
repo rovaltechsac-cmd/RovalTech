@@ -50,6 +50,7 @@ $envPrefix = 'HOME=' . escapeshellarg($dir . '/.home')
 echo 'PHP: ' . PHP_VERSION . PHP_EOL;
 echo 'PHP usado: ' . $phpInfo['bin'] . ' (SAPI: ' . $phpInfo['sapi'] . ')' . PHP_EOL;
 echo 'Flags: ' . ($phpFlags ?: '(ninguno)') . PHP_EOL;
+echo 'fileinfo (web): ' . (extension_loaded('fileinfo') ? 'SI' : 'NO') . PHP_EOL;
 echo 'disable_functions: ' . (string) ini_get('disable_functions') . PHP_EOL;
 foreach (['exec', 'shell_exec', 'proc_open', 'passthru', 'system'] as $fn) {
     echo $fn . ': ' . ((function_exists($fn) && !in_array($fn, $disabled)) ? 'SI' : 'NO') . PHP_EOL;
@@ -83,7 +84,7 @@ if (!is_file($dir . '/vendor/autoload.php')) {
         }
     }
     if (is_file($composer)) {
-        runCommand($envPrefix . $php . $phpFlags . ' composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-interaction', $dir);
+        runCommand($envPrefix . $php . $phpFlags . ' composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-interaction --ignore-platform-req=ext-fileinfo', $dir);
     }
 } else {
     echo 'vendor/ ya existe' . PHP_EOL . PHP_EOL;
