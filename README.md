@@ -66,6 +66,11 @@ Los datos de contacto de la plantilla son de ejemplo (`contacto@rovaltech.com`,
 `+52 55 0000 0000`). Reemplázalos en `resources/views/contacto.blade.php` y
 `resources/views/layouts/app.blade.php`.
 
+## Requisitos del servidor
+
+- **PHP 7.3 – 8.1** (Laravel 8). Si tu hosting tiene PHP **8.2 o 8.3**, cambia la versión a **8.1** en cPanel → *Select PHP Version* / *MultiPHP Manager*; con 8.3 Laravel 8 devuelve 500 en blanco.
+- Extensiones: `mbstring`, `openssl`, `pdo_sqlite` (o `pdo_mysql`), `tokenizer`, `xml`, `ctype`, `json`, `fileinfo`, `curl`.
+
 ## Despliegue en hosting con Git Version Control (cPanel)
 
 El repositorio ya está listo para clonarse desde el hosting:
