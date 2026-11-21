@@ -41,6 +41,12 @@ $phpInfo = findPhpBinary();
 $php = escapeshellarg($phpInfo['bin']);
 $phpFlags = $phpInfo['sapi'] === 'cli' ? '' : ' -d register_argc_argv=Off';
 
+// Composer exige HOME/COMPOSER_HOME. Usamos directorios escribibles dentro del repo.
+@mkdir($dir . '/.composer', 0777, true);
+@mkdir($dir . '/.home', 0777, true);
+$envPrefix = 'HOME=' . escapeshellarg($dir . '/.home')
+    . ' COMPOSER_HOME=' . escapeshellarg($dir . '/.composer') . ' ';
+
 echo 'PHP: ' . PHP_VERSION . PHP_EOL;
 echo 'PHP usado: ' . $phpInfo['bin'] . ' (SAPI: ' . $phpInfo['sapi'] . ')' . PHP_EOL;
 echo 'Flags: ' . ($phpFlags ?: '(ninguno)') . PHP_EOL;
@@ -77,7 +83,7 @@ if (!is_file($dir . '/vendor/autoload.php')) {
         }
     }
     if (is_file($composer)) {
-        runCommand($php . $phpFlags . ' composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-interaction', $dir);
+        runCommand($envPrefix . $php . $phpFlags . ' composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-interaction', $dir);
     }
 } else {
     echo 'vendor/ ya existe' . PHP_EOL . PHP_EOL;
@@ -102,10 +108,10 @@ if (!is_file($dir . '/database/database.sqlite')) {
 }
 
 echo '--- Laravel ---' . PHP_EOL;
-runCommand($php . $phpFlags . ' artisan key:generate', $dir);
-runCommand($php . $phpFlags . ' artisan migrate --force', $dir);
-runCommand($php . $phpFlags . ' artisan db:seed --force', $dir);
-runCommand($php . $phpFlags . ' artisan optimize:clear', $dir);
+runCommand($envPrefix . $php . $phpFlags . ' artisan key:generate', $dir);
+runCommand($envPrefix . $php . $phpFlags . ' artisan migrate --force', $dir);
+runCommand($envPrefix . $php . $phpFlags . ' artisan db:seed --force', $dir);
+runCommand($envPrefix . $php . $phpFlags . ' artisan optimize:clear', $dir);
 
 echo '--- Estado final ---' . PHP_EOL;
 echo 'Vendor: ' . (is_file($dir . '/vendor/autoload.php') ? 'OK' : 'FALTA') . PHP_EOL;
