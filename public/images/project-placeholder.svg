@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" fill="none">
+  <rect width="800" height="600" fill="#121317"/>
+  <path d="M0 150H800M0 300H800M0 450H800M200 0V600M400 0V600M600 0V600" stroke="#1c1d22"/>
+  <path d="M80 420H250L330 340H470L560 250H720" stroke="#ae9357" stroke-width="3"/>
+  <circle cx="330" cy="340" r="8" fill="#ae9357"/>
+  <circle cx="560" cy="250" r="8" fill="#ae9357"/>
+  <text x="400" y="510" fill="#777a88" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" letter-spacing="6">ROVAL TECH</text>
+</svg>
