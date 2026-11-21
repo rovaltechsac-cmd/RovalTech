@@ -6,6 +6,17 @@ use Illuminate\Http\Request;
 define('LARAVEL_START', microtime(true));
 
 /*
+| When PHP's built-in server uses this file as its router (php -S ... -t public
+| public/index.php), it also receives requests for static files. Return false
+| so PHP serves them directly instead of handing them to Laravel.
+| On Apache/Nginx this check is never triggered for real static files.
+*/
+$requestPath = urldecode((string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH));
+if ($requestPath !== '/' && strpos($requestPath, '..') === false && is_file(__DIR__ . $requestPath)) {
+    return false;
+}
+
+/*
 |--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance
 |--------------------------------------------------------------------------

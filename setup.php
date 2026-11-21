@@ -16,8 +16,13 @@ function findPhpBinary()
 {
     global $disabled;
     $candidates = [
+        '/opt/alt/php83/usr/bin/php',
+        '/opt/alt/php84/usr/bin/php',
+        '/opt/cpanel/ea-php83/root/usr/bin/php',
         '/opt/alt/php81/usr/bin/php',
         '/opt/cpanel/ea-php81/root/usr/bin/php',
+        '/usr/local/bin/php83',
+        '/usr/bin/php83',
         '/usr/local/bin/php',
         '/usr/bin/php',
         '/usr/local/bin/php81',
@@ -109,7 +114,13 @@ if (!is_file($dir . '/database/database.sqlite')) {
 }
 
 echo '--- Laravel ---' . PHP_EOL;
-runCommand($envPrefix . $php . $phpFlags . ' artisan key:generate', $dir);
+// No regenerar APP_KEY en una segunda ejecución: cerraría las sesiones activas.
+$envContent = (string) @file_get_contents($dir . '/.env');
+if (!preg_match('/^APP_KEY=base64:/m', $envContent)) {
+    runCommand($envPrefix . $php . $phpFlags . ' artisan key:generate --force', $dir);
+} else {
+    echo 'APP_KEY ya existe; no se regenera.' . PHP_EOL . PHP_EOL;
+}
 runCommand($envPrefix . $php . $phpFlags . ' artisan migrate --force', $dir);
 runCommand($envPrefix . $php . $phpFlags . ' artisan db:seed --force', $dir);
 runCommand($envPrefix . $php . $phpFlags . ' artisan optimize:clear', $dir);

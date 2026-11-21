@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Project;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,5 +30,11 @@ class AppServiceProvider extends ServiceProvider
         if (! config('app.debug')) {
             error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
         }
+
+        // El footer solo debe mostrar proyectos publicados: nunca enlaces fijos
+        // que puedan quedar apuntando a un proyecto desactivado.
+        View::composer('layouts.app', function ($view): void {
+            $view->with('footerProjects', Project::published()->latest()->take(3)->get());
+        });
     }
 }

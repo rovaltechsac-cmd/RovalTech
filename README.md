@@ -41,7 +41,7 @@ php artisan migrate --seed
 ```
 URL:         http://127.0.0.1:8000/login
 Correo:      admin@rovaltech.com
-Contraseña:  rovaltech2026
+Contraseña:  RvT-2026-Kipu-7mQ4!
 ```
 
 > Cambia estas credenciales antes de desplegar en producción.
@@ -105,7 +105,21 @@ bash deploy.sh
 ```
 
 El script `deploy.sh` instala dependencias, crea `.env` si no existe, genera
-`APP_KEY`, migra, siembra los datos de ejemplo y ajusta permisos.
+`APP_KEY` (solo si está vacío), migra, siembra los datos de ejemplo y ajusta permisos.
+
+**Detalles importantes del hosting (ya resueltos en el script):**
+
+- Busca un **PHP CLI** de verdad (`/opt/alt/php83/usr/bin/php`,
+  `/opt/alt/php84/usr/bin/php`, `/opt/cpanel/ea-php83/root/usr/bin/php`,
+  `/usr/bin/php83`, `php`) y comprueba que `PHP_SAPI` devuelva `cli`.
+  El PHP web es LSAPI y Composer se niega a correr ahí.
+- Define `HOME` y `COMPOSER_HOME` apuntando a `.home/` y `.composer/` dentro
+  del repo (ambos ignorados por Git).
+- Usa `--ignore-platform-req=ext-fileinfo` porque `fileinfo` falta en el
+  hosting. Aun así **activa `fileinfo` en cPanel → Select PHP Version** para
+  poder subir imágenes desde el panel.
+- No sobrescribe un `.env` existente ni regenera una `APP_KEY` ya creada:
+  los redeploys no cierran sesiones ni pierden tus cambios.
 
 ### 3. Configuración manual (solo la primera vez)
 
@@ -132,7 +146,7 @@ bash deploy.sh
 ### 4. Verificación
 
 - Abre `https://tu-dominio.com` → debe cargar la portada.
-- `/login` → `admin@rovaltech.com` / `rovaltech2026` (cámbialo antes de publicar).
+- `/login` → `admin@rovaltech.com` / `RvT-2026-Kipu-7mQ4!` (cámbialo antes de publicar).
 - `/admin/proyectos` → panel con los radios **Activo / Inactivo**.
 
 ### Notas
@@ -163,6 +177,14 @@ Y accede a `https://kipucloud.com/rovalTech/`.
 > `bash deploy.sh`. Si `/rovalTech/public/` daba error 500, revisa
 > `storage/logs/laravel.log`: casi siempre es `APP_KEY` vacío, falta de
 > `vendor/` o permisos de `storage/`.
+
+### Archivos temporales de diagnóstico
+
+`setup.php` (abrir `/setup.php?key=roval-setup-2026` **una sola vez**) y
+`diag.php` (`/diag.php?key=roval-diag-2026`) existen solo para el primer
+despliegue sin SSH. `setup.php` ya no regenera la `APP_KEY` si existe, pero
+**borra ambos archivos del repo en cuanto la web funcione**: están bloqueados
+en `.htaccess`, aunque no deben quedar publicados.
 
 ### Volver a PHP 8.3
 

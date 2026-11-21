@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@rovaltech.com'],
             [
                 'name' => 'Administrador Roval Tech',
-                'password' => Hash::make('rovaltech2026'),
+                'password' => Hash::make('RvT-2026-Kipu-7mQ4!'),
                 'email_verified_at' => now(),
             ]
         );

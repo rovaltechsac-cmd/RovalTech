@@ -86,9 +86,9 @@
             <div class="footer-col">
                 <h3>Proyectos</h3>
                 <a href="{{ route('proyectos.index') }}">Todos los proyectos</a>
-                <a href="{{ route('proyectos.show', 'robot-soccer') }}">Robot Soccer</a>
-                <a href="{{ route('proyectos.show', 'robot-sumo') }}">Robot Sumo</a>
-                <a href="{{ route('proyectos.show', 'linea-de-produccion-automatizada') }}">Automatización industrial</a>
+                @foreach ($footerProjects as $footerProject)
+                    <a href="{{ route('proyectos.show', $footerProject) }}">{{ $footerProject->title }}</a>
+                @endforeach
                 @auth
                     <a href="{{ route('admin.projects.index') }}">Administrar</a>
                 @else
